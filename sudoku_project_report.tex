@@ -1,0 +1,112 @@
+\documentclass[english]{article}
+\usepackage[english]{babel}
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{url}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\begin{document}
+
+\title{MATH:7450\\
+Topological Data Analysis Project: \\
+Population Diversity of Genetic Algorithm\\
+for Solving Sudoku Puzzles}
+
+\author{Gregory Tanner,\\ 
+Applied Math and Computational Sciences,\\
+University of Iowa 
+\and Brice Merwine,\\
+Applied Math and Computational Sciences,\\
+University of Iowa}
+\maketitle
+
+\section{Abstract}
+\section{Introduction}
+In this project, we use the Topological Data Analysis (TDA) Mapper algorithm to analyze the generational results from genetic algorithms applied to solving Sudoku puzzles.
+Specifically, we aim to answer questions about the diversity of candidate solutions over time.
+\section{Background}
+\subsection{Problem Description}
+Sudoku is a popular pencil and paper puzzle that takes place on a 9-by-9 grid divided into nine 3-by-3 blocks. The puzzle begins with certain cells (givens) of the grid filled in with the numbers 1-9. The goal of the puzzle is to fill in the remaining grid such that:
+\begin{enumerate}
+\item Every row contains the numbers 1-9 exactly once.
+\item Every column contains the numbers 1-9 exactly once.
+\item Every 3-by-3 block contains the numbers 1-9 exactly once.
+\end{enumerate}
+\begin{figure}
+\centering
+\subfloat[Unsolved Sudoku Puzzle \cite{sudoku1}]{\includegraphics[width=0.42\textwidth]{Sudoku_Puzzle_Unfilled.png}}
+\qquad
+\subfloat[Solved Sudoku Puzzle \cite{sudoku2}]{\includegraphics[width=0.42\textwidth]{Sudoku_Puzzle_Filled.png}}
+\end{figure}
+
+
+Genetic algorithms are a biology-inspired stochastic optimization strategy that aims to mimic the processes of evolution and natural selection. In search of an optimal solution, the algorithm produces a population of solutions that evolve over successive generations. The main evolutionary operators that are applied are recombination (also called crossover) and mutation. In recombination, information from two (or more) parents is randomly combined to create an new offspring solution. In mutation, a small portion of the information of a solution is randomly changed. At each generation, a certain number of current population and offspring is chosen to survive. This process repeats until a termination condition is reached. The general scheme of a genetic algorithm follows\cite{eiben2003introduction}:
+\begin{algorithm}
+  \caption{Genetic Algorithm Pseudocode}  
+  \begin{algorithmic}
+    \STATE \textsc{Initialize} population with random candidate solutions;
+    \STATE \textsc{Evaluate} each candidate;
+    \REPEAT
+    \STATE \textsc{Select} parents;
+    \STATE \textsc{Crossover} pairs of parents to create offspring;
+    \STATE \textsc{Mutate} the resulting offspring;
+    \STATE \textsc{Evaluate} new candidates;
+    \STATE \textsc{Select} individuals for the next generation;
+    \UNTIL{\textsc{Termination Condition} is met}
+  \end{algorithmic}
+\end{algorithm}
+
+There are several papers detailing the application of genetic algorithms to Sudoku \cite{mantere2006solving,sato2010solving,segura2016importance,weiss2009genetic}. For this project, we follow the construction of Segure et al. \cite{segura2016importance}:
+\begin{description}
+\item[Encoding] The candidate solutions are represented as 81-element arrays containing the numbers 1-9. The candidate solutions are initialized such that each 3-by-3 block contains  the numbers 1-9 exactly once. This leaves only the row and column constraints to check. 
+\item[Evaluation] Each candidate solution is evaluated by taking the sum of the number of row and column repetitions. An additional penalty of 100 times the number of row and column conflicts is imposed. The goal is to minimize this fitness value, and the exact solution has a fitness value of 0. 
+\item[Parent Selection] Two parents are selected by a pair of binary tournaments. In each tournament, two random candidates are selected from the population, and the candidate with the better fitness score is selected to be a parent.
+\item[Recombination] The recombination selects entire 3-by-3 blocks from the parents to create the offspring. This maintains that each block contains the numbers 1-9 exactly once.
+\item[Mutation] The mutation operator swaps two non-fixed elements within a block.
+\item[Survivor Selection] We evaluate several survivor selection mechanism and investigate their impact on diversity.
+\item[Termination Condition] The genetic algorithm was allowed to run for a fixed number of generations or until the exact solution (fitness value = 0) is found.
+\end{description}
+Segura et al. noted the importance of maintaining diversity in the solution population when trying to solve Sudoku puzzzles with genetic algorithms \cite{segura2016importance}. They analyze the performance of several different survivor selection mechanisms in maintaining diversity.
+
+\subsection{Topological Data Analysis Mapper Algorithm}
+The TDA Mapper algorithm was developed by Singh, M\'{e}moli and Carlsson \cite{singh2007topological}. 
+The purpose of the TDA mapper algorithm is to allow a method to visualize higher dimensional data in a manageable fashion.
+Inspired by the Reeb graph, the mapper utilizes topological properties to extract information from the shape of the data. 
+The TDA mapper algorithm consists of these basic steps:
+\begin{itemize}
+ \item Obtain and preprocess the data into a manageable format.
+ \item Use a filter function to map the data onto one (or possibly two) dimensions. 
+ \item Cover the image of the data by overlapping intervals (patches for two dimensions). The preimage of these intervals (patches) create overlapping bins in the data.
+ \item Cluster each overlapping bin separately.
+ \item Create a graph from the results. Each vertex corresponds to a cluster, and edges are placed between intersecting clusters.
+\end{itemize}
+The TDA mapper algorithm allows us to visualize our data as a lower dimensional graph, to which we can use topology to examine and draw conclusions.
+\section{Results}
+\section{Discussion}
+\section{Conclusion}
+\section{Acknowledgement}
+
+The authors would like to acknowledge the TDA Mapper course taught
+by Dr. Isabel Darcy Spring 2018. Also, the authors would like thank
+Cole Stiegler for the countless conversations we had about implementing
+genetic algorithms.
+
+\section{Author Contribution}
+
+Gregory Tanner developed the Matlab codes for solving Sudoku puzzles
+with genetic algorithm. He contributed to all of the sections of this project report.
+
+Brice Merwine contributed to the background section.
+
+\section{Funding Sources and Conflicts of Interest}
+
+Gregory Tanner is supported by a fellowship from the University of
+Iowa Graduate College. He is conflicted about the amount of time that
+he has spent on the genetic algorithms for Sudoku puzzle problem.
+
+
+\bibliographystyle{plain}
+\bibliography{sudoku}
+
+
+\end{document}
